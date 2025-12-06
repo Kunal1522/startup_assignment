@@ -6,7 +6,7 @@ __pycache__/
 .Python
 env/
 venv/
-.env
+.venv/
 *.egg-info/
 dist/
 build/
@@ -17,6 +17,7 @@ npm-debug.log
 yarn-error.log
 .pnp/
 .pnp.js
+.eslintcache
 
 # IDE
 .vscode/
@@ -38,7 +39,17 @@ Thumbs.db
 *.pem
 *.key
 
-# Database
+# Database - MongoDB data files
+src/db/
+*.wt
+*.lock
+*.turtle
+mongod.lock
+WiredTiger*
+diagnostic.data/
+journal/
+
+# SQLite
 *.db
 *.sqlite3
 
@@ -51,3 +62,10 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+# Python virtual environment
+src/rest/venv/
+
+# Misc
+mydatabase
+*.bson
