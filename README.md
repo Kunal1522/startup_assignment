@@ -217,3 +217,4 @@ DOCKER_USERNAME=your-username TAG=latest docker-compose -f docker-compose.prod.y
 | POST | `/api/todos/` | Create a TODO |
 | DELETE | `/api/todos/<id>/` | Delete a TODO |
 | DELETE | `/api/todos/clear/` | Delete all TODOs |
+# deployed
