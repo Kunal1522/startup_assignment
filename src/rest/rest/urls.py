@@ -14,8 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
-from .views import TodoListView
+from django.http import JsonResponse
+from .views import TodoListView, TodoDetailView
+
+
+def api_root(request):
+    return JsonResponse({
+        'status': 'ok',
+        'message': 'Adbrew TODO API',
+        'endpoints': {
+            'todos': '/todos/',
+            'todo_detail': '/todos/<id>/'
+        }
+    })
+
 
 urlpatterns = [
-    path('todos/', TodoListView.as_view(), name='signup'),
+    path('', api_root, name='api-root'),
+    path('todos/', TodoListView.as_view(), name='todo-list'),
+    path('todos/<str:todo_id>/', TodoDetailView.as_view(), name='todo-detail'),
 ]

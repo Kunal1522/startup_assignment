@@ -1,25 +1,30 @@
-version: '2'
 services:
   api:
     build: .
     container_name: api
+    restart: unless-stopped
     command: bash -c "cd /src/rest && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
-    links:
+    depends_on:
       - mongo
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
     volumes:
-      - ${ADBREW_CODEBASE_PATH}/tmp:/tmp
-      - ${ADBREW_CODEBASE_PATH}:/src
+      - ./src:/src
 
   app:
     build: .
     container_name: app
+    restart: unless-stopped
     command: bash -c "cd /src/app && yarn install && yarn start"
     ports:
       - "3000:3000"
+    depends_on:
+      - api
     volumes:
-      - ${ADBREW_CODEBASE_PATH}:/src
+      - ./src:/src
 
   mongo:
     build: .
@@ -28,7 +33,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ${ADBREW_CODEBASE_PATH}/db/:/data/db
+      - mongo-data:/data/db
     command: /usr/bin/mongod --bind_ip 0.0.0.0
 
-    
+volumes:
+  mongo-data:

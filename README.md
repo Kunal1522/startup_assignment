@@ -66,3 +66,154 @@ When you run `localhost:3000`, you would see 2 things:
    * https://kinsta.com/blog/python-object-oriented-programming/
    * https://realpython.com/solid-principles-python/
    * https://www.toptal.com/python/python-design-patterns
+
+---
+
+# Solution Implementation
+
+## Architecture Overview
+
+This implementation follows **production-grade architecture** with SOLID principles and clean code practices.
+
+### Backend Architecture (Django + MongoDB)
+
+```
+src/rest/rest/
+├── core/
+│   ├── database.py      # MongoDBConnection (Singleton Pattern)
+│   └── logger.py        # AppLogger (Singleton Pattern)
+├── exceptions/
+│   └── base.py          # Custom exceptions hierarchy
+├── validators/
+│   └── todo.py          # TodoValidator (input validation)
+├── serializers/
+│   └── todo.py          # TodoSerializer (data transformation)
+├── repositories/
+│   └── todo.py          # TodoRepository (data access layer)
+├── services/
+│   └── todo.py          # TodoService (business logic)
+├── tests/               # Pytest test suite (39 tests)
+│   ├── conftest.py
+│   ├── test_validators.py
+│   ├── test_serializers.py
+│   ├── test_repositories.py
+│   └── test_views.py
+├── views.py             # API endpoints
+└── urls.py              # URL routing
+```
+
+**Design Patterns Used:**
+- **Singleton Pattern**: Database connection, Logger
+- **Repository Pattern**: Data access abstraction
+- **Service Layer**: Business logic separation
+- **Custom Exception Hierarchy**: Centralized error handling
+
+### Frontend Architecture (React + Hooks)
+
+```
+src/app/src/
+├── api/
+│   └── TodoAPI.js       # API client with error handling
+├── hooks/
+│   └── useTodos.js      # Custom hook for state management
+├── components/
+│   ├── TodoForm.js      # Form component
+│   ├── TodoList.js      # List + Item components
+│   ├── ErrorMessage.js  # Error display + logging
+│   ├── ConfirmDialog.js # Modal confirmation
+│   └── ClearAllButton.js# Clear all with confirmation
+├── __tests__/           # Jest test suite (31 tests)
+│   ├── TodoAPI.test.js
+│   ├── useTodos.test.js
+│   ├── TodoForm.test.js
+│   ├── TodoList.test.js
+│   └── App.test.js
+├── App.js               # Main component
+└── App.css              # Professional styling
+```
+
+**Design Patterns Used:**
+- **Custom Hooks**: State management abstraction
+- **Component Composition**: Modular UI components
+- **Error Boundary Pattern**: Graceful error handling
+- **Separation of Concerns**: API, hooks, components
+
+## Features
+
+- ✅ Create TODO items
+- ✅ List all TODOs (latest first)
+- ✅ Delete individual TODO
+- ✅ Clear all TODOs (with confirmation)
+- ✅ Form validation
+- ✅ Error handling with user-friendly messages
+- ✅ Loading states
+- ✅ Professional UI styling
+
+## Running Tests
+
+### Backend Tests (39 tests)
+```bash
+# Run inside Docker container
+docker-compose exec api pytest -v
+
+# With coverage
+docker-compose exec api pytest -v --cov=rest --cov-report=term-missing
+```
+
+### Frontend Tests (31 tests)
+```bash
+# Run locally
+cd src/app
+npm test -- --watchAll=false
+
+# With coverage
+npm test -- --watchAll=false --coverage
+```
+
+## CI/CD Pipeline
+
+The project includes a GitHub Actions CI/CD pipeline (`.github/workflows/ci-cd.yml`) that:
+
+1. **On every push/PR:**
+   - Runs backend tests (pytest with MongoDB service)
+   - Runs frontend tests (Jest)
+   - Uploads coverage reports
+
+2. **On push to main:**
+   - Builds Docker images
+   - Pushes to Docker Hub
+   - Deploys to AWS EC2
+
+3. **On PRs:**
+   - Runs code quality checks (flake8, black, ESLint)
+
+### Required GitHub Secrets
+
+```
+DOCKER_USERNAME      # Docker Hub username
+DOCKER_PASSWORD      # Docker Hub password
+AWS_ACCESS_KEY_ID    # AWS credentials
+AWS_SECRET_ACCESS_KEY
+EC2_HOST             # EC2 instance public IP
+EC2_USERNAME         # EC2 SSH username (e.g., ubuntu)
+EC2_SSH_KEY          # EC2 SSH private key
+```
+
+### Production Deployment
+
+```bash
+# Build production images
+docker-compose -f docker-compose.prod.yml build
+
+# Deploy
+DOCKER_USERNAME=your-username TAG=latest docker-compose -f docker-compose.prod.yml up -d
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/todos/` | List all TODOs |
+| POST | `/api/todos/` | Create a TODO |
+| DELETE | `/api/todos/<id>/` | Delete a TODO |
+| DELETE | `/api/todos/clear/` | Delete all TODOs |

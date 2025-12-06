@@ -1,27 +1,25 @@
+import React from 'react';
+import useTodos from './hooks/useTodos';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
+import ErrorMessage from './components/ErrorMessage';
+import ClearAllButton from './components/ClearAllButton';
 import './App.css';
-import logo from './logo.svg';
 
+function App() {
+  const { todos, loading, error, addTodo, deleteTodo, deleteAllTodos, clearError } = useTodos();
 
-export function App() {
   return (
-    <div className="App">
-      <div>
-        <h1>List of TODOs</h1>
-        <li>Learn Docker</li>
-        <li>Learn React</li>
-      </div>
-      <div>
-        <h1>Create a ToDo</h1>
-        <form>
-          <div>
-            <label for="todo">ToDo: </label>
-            <input type="text" />
-          </div>
-          <div style={{"marginTop": "5px"}}>
-            <button>Add ToDo!</button>
-          </div>
-        </form>
-      </div>
+    <div className="app">
+      <header className="app-header">
+        <h1>Todo App</h1>
+      </header>
+      <main className="app-main">
+        <ErrorMessage error={error} onDismiss={clearError} />
+        <TodoForm onSubmit={addTodo} />
+        <ClearAllButton onClearAll={deleteAllTodos} disabled={todos.length === 0} />
+        <TodoList todos={todos} loading={loading} onDelete={deleteTodo} />
+      </main>
     </div>
   );
 }
